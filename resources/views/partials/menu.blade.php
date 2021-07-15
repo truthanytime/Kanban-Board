@@ -21,13 +21,32 @@
             </a>
         </li>
         @can('project_management_access')
-            <li class="c-sidebar-nav-item">
-                <a href="{{ route('admin.kanban') }}" class="c-sidebar-nav-link">
-                    <i class="c-sidebar-nav-icon fas fa-fw fa-tasks">
+            <li
+                class="c-sidebar-nav-dropdown {{ request()->is('admin/kanban*') ? 'c-show' : '' }}  {{ request()->is('admin/time-entries*') ? 'c-show' : '' }}">
+                <a class="c-sidebar-nav-dropdown-toggle" href="#">
+                    <i class="fa-fw fas fa-tasks c-sidebar-nav-icon">
 
                     </i>
                     {{ trans('Kanban Card') }}
-                </a>
+                </a>                
+                <ul class="c-sidebar-nav-dropdown-items">
+                    <li class="c-sidebar-nav-item">
+                        <a href="{{ route('admin.kanban') }}"
+                            class="c-sidebar-nav-link {{ request()->is('admin/kanban') || request()->is('admin/kanban/*') ? 'c-active' : '' }}">
+                            <i class="fa-fw fas fa-chalkboard c-sidebar-nav-icon">
+                            </i>
+                            {{ trans('Dashboard') }}
+                        </a>
+                    </li>
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.kanbancreate') }}"
+                                class="c-sidebar-nav-link {{ request()->is('admin/kanbancreate') || request()->is('admin/kanbancreate/*') ? 'c-active' : '' }}">
+                                <i class="fa-fw fab fa-creative-commons-share c-sidebar-nav-icon">
+                                </i>
+                                {{ trans('Create') }}
+                            </a>
+                        </li>
+                </ul>
             </li>
             <li
                 class="c-sidebar-nav-dropdown {{ request()->is('admin/projects*') ? 'c-show' : '' }} {{ request()->is('admin/actors*') ? 'c-show' : '' }} {{ request()->is('admin/use-cases*') ? 'c-show' : '' }} {{ request()->is('admin/features*') ? 'c-show' : '' }} {{ request()->is('admin/phases*') ? 'c-show' : '' }} {{ request()->is('admin/project-assignments*') ? 'c-show' : '' }} {{ request()->is('admin/time-entries*') ? 'c-show' : '' }}">

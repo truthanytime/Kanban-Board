@@ -71,6 +71,9 @@ class FeatureController extends Controller
 
     public function update(UpdateFeatureRequest $request, Feature $feature)
     {
+        var_dump($request->all());
+
+        exit;
         $feature->update($request->all());
         $feature->use_cases()->sync($request->input('use_cases', []));
         $feature->phases()->sync($request->input('phases', []));
@@ -86,7 +89,6 @@ class FeatureController extends Controller
 
         return view('admin.features.show', compact('feature'));
     }
-
     public function destroy(Feature $feature)
     {
         abort_if(Gate::denies('feature_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');

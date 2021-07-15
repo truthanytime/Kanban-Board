@@ -130,3 +130,11 @@ table.dataTable thead .sorting_desc {
 .custom-select.form-control-sm {
     padding: 0.25rem 1.5rem;
 }
+.savedraft{
+    position:absolute;
+    bottom:5px;
+    left:25px;
+}
+.form-control{
+    background-color:white!important;
+}

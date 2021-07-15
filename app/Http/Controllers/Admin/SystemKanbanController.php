@@ -6,84 +6,38 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
+use App\Http\Requests\MassDestroyFeatureRequest;
+use App\Http\Requests\StoreFeatureRequest;
+use App\Http\Requests\UpdateFeatureRequest;
+use App\Models\Client;
+use App\Models\Feature;
+use App\Models\ProjectStatus;
+use Gate;
+use Symfony\Component\HttpFoundation\Response;
+
 class SystemKanbanController extends Controller
 {
-    public $sources = [
-        [
-            'model'      => '\App\Models\Project',
-            'date_field' => 'due_date',
-            'field'      => 'name',
-            'prefix'     => 'Project',
-            'suffix'     => 'is due',
-            'route'      => 'admin.projects.edit',
-        ],
-        [
-            'model'      => '\App\Models\Project',
-            'date_field' => 'start_date',
-            'field'      => 'name',
-            'prefix'     => 'Project',
-            'suffix'     => 'has kicked off!',
-            'route'      => 'admin.projects.edit',
-        ],
-        [
-            'model'      => '\App\Models\Phase',
-            'date_field' => 'due_date',
-            'field'      => 'name',
-            'prefix'     => 'Phase',
-            'suffix'     => 'is due!',
-            'route'      => 'admin.phases.edit',
-        ],
-        [
-            'model'      => '\App\Models\Task',
-            'date_field' => 'due_date',
-            'field'      => 'id',
-            'prefix'     => 'Task',
-            'suffix'     => 'is due!',
-            'route'      => 'admin.tasks.edit',
-        ],
-    ];
-
     public function index()
     {
-        $events = [];
-        foreach ($this->sources as $source) {
-            foreach ($source['model']::all() as $model) {
-                $crudFieldValue = $model->getAttributes()[$source['date_field']];
+        abort_if(Gate::denies('project_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-                if (!$crudFieldValue) {
-                    continue;
-                }
+        $projects = Feature::with(['project'])->get();
+        //$dadiff=Feature::with('datediff'())
+        //print_r($projects->toArray());
+        //exit;
+        return view('admin.kanban.kanban', compact('projects'));
+    }
+    public function create()
+    {
+        abort_if(Gate::denies('project_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-                $events[] = [
-                    'title' => trim($source['prefix'] . ' ' . $model->{$source['field']} . ' ' . $source['suffix']),
-                    'start' => $crudFieldValue,
-                    'url'   => route($source['route'], $model->id),
-                ];
-            }
-        }
-
-        return view('admin.kanban.kanban', compact('events'));
+        $projects = Feature::with(['project'])->get();
+        return view('admin.kanban.kanbancreate', compact('projects'));
     }
 
-    public function saveDraft(Request $request)
+    public function savedraft(Request $request)
     {
-        $id = $_POST['id'];
-        $test = new TestModel();
-        $result = $test->getData($id);
-
-        foreach ($result as $row) {
-            $html =
-                '<tr>
-                    <td>' . $row->name . '</td>' .
-                '<td>' . $row->address . '</td>' .
-                '<td>' . $row->age . '</td>' .
-                '</tr>';
-        }
-        return $html;
-        // print_r($request->dm_project_new_name);
-        // print_r("<br>");
-        // print_r($request->dm_project_new_description);
-        // print_r("<br>");
+        print_r("Save success");
         exit;
     }
 }

@@ -13,6 +13,8 @@ Auth::routes();
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
     Route::get('/', 'HomeController@index')->name('home');
     Route::get('/kanban', 'SystemKanbanController@index')->name('kanban');
+    Route::get('/kanbansavedraft', 'SystemKanbanController@savedraft')->name('kanbansavedraft');
+    Route::get('/kanbancreate', 'SystemKanbanController@create')->name('kanbancreate');
     // Permissions
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
     Route::resource('permissions', 'PermissionsController');
@@ -88,6 +90,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Project
     Route::delete('projects/destroy', 'ProjectController@massDestroy')->name('projects.massDestroy');
     Route::resource('projects', 'ProjectController');
+
+    //ajax projects
+    Route::resource('ajax_drag_project', 'Ajaxdragprocontroller');
+    Route::post('ajax_drag_project/create', 'Ajaxdragprocontroller@create')->name('create');
 
     // Note
     Route::delete('notes/destroy', 'NoteController@massDestroy')->name('notes.massDestroy');

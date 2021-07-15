@@ -1,247 +1,200 @@
 @extends('layouts.admin')
 @section('styles')
-    @parent
-    <link href="{{ asset('/css/dashmix.min.css') }}" rel="stylesheet">
+
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
 @endsection
+
 @section('content')
-    <h3 class="page-title">{{ trans('global.kanbanproject') }}</h3>
-    <div class="card">
-        <div class="card-header text-primary">
-            {{ trans('Kanban Card') }}
-        </div>
-        <div class="card-body">
-            <form action="/saveDraft" method="POST">
-                @csrf
-                <h2 class="content-heading">Connected lists</h2>
-                <div class="row">
-                    <div class="col-xl-4">
-                        <!-- Simple -->
-                        <div class="block block-rounded">
-                            <div class="block-header block-header-default">
-                                <h3 class="block-title">Simple</h3>
-                            </div>
-                            <div class="block-content block-content-full">
-                                <div class="js-nestable-connected-simple dd">
-                                    <ol class="dd-list">
-                                        <li class="dd-item" data-id="1">
-                                            <div class="dd-handle">Bootstrap</div>
-                                            <ol class="dd-list">
-                                                <li class="dd-item" data-id="2">
-                                                    <div class="dd-handle">Themes</div>
-                                                </li>
-                                                <li class="dd-item" data-id="3">
-                                                    <div class="dd-handle">Documentation</div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li class="dd-item" data-id="4">
-                                            <div class="dd-handle">Learning</div>
-                                            <ol class="dd-list">
-                                                <li class="dd-item" data-id="5">
-                                                    <div class="dd-handle">Code</div>
-                                                </li>
-                                                <li class="dd-item" data-id="6">
-                                                    <div class="dd-handle">Tutorials</div>
-                                                </li>
-                                                <li class="dd-item" data-id="7">
-                                                    <div class="dd-handle">Articles</div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li class="dd-item" data-id="8">
-                                            <div class="dd-handle">Design</div>
-                                        </li>
-                                        <li class="dd-item" data-id="9">
-                                            <div class="dd-handle">Coding</div>
-                                        </li>
-                                        <li class="dd-item" data-id="10">
-                                            <div class="dd-handle">Marketing</div>
-                                        </li>
-                                    </ol>
-                                </div>
-                            </div>
+    <div class="container-fluid clearfix mb-5">
+        <h2 class="page-title float-left">{{ trans('Kanban Board') }}</h2>
+        <form action="/createproject" class="float-right" method="POST">
+            @csrf
+            <div class="input-group">
+                <a href="{{ route('admin.kanbancreate') }}" class="btn btn-md btn-primary ml-1" id="btn_add"> <i class="fa fa-plus"></i>
+                    Add project</a>
+            </div>
+        </form>
+    </div>
+    <form action="/saveDraft" method="POST">
+        @csrf
+        <div class="wrapper wrapper-content  animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="ibox">
+                        <div class="ibox-header p-3">
+                            <h2 class="m-0">Backlog</h2>
                         </div>
-                        <!-- END Simple -->
-                    </div>
-                    <div class="col-xl-4">
-                        <!-- With Icons -->
-                        <div class="block block-rounded">
-                            <div class="block-header block-header-default">
-                                <h3 class="block-title">With Icons</h3>
-                            </div>
-                            <div class="block-content block-content-full">
-                                <div class="js-nestable-connected-icons dd">
-                                    <ol class="dd-list">
-                                        <li class="dd-item" data-id="11">
-                                            <div class="dd-handle">
-                                                <i class="fa fa-bold text-muted mr-1"></i> Bootstrap
-                                            </div>
-                                            <ol class="dd-list">
-                                                <li class="dd-item" data-id="12">
-                                                    <div class="dd-handle">
-                                                        <i class="fa fa-brush text-muted mr-1"></i> Themes
-                                                    </div>
-                                                </li>
-                                                <li class="dd-item" data-id="13">
-                                                    <div class="dd-handle">
-                                                        <i class="fa fa-file text-muted mr-1"></i> Documentation
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li class="dd-item" data-id="14">
-                                            <div class="dd-handle">
-                                                <i class="fa fa-graduation-cap text-muted mr-1"></i> Learning
-                                            </div>
-                                            <ol class="dd-list">
-                                                <li class="dd-item" data-id="15">
-                                                    <div class="dd-handle">
-                                                        <i class="fa fa-code text-muted mr-1"></i> Code
-                                                    </div>
-                                                </li>
-                                                <li class="dd-item" data-id="16">
-                                                    <div class="dd-handle">
-                                                        <i class="fa fa-pencil-alt text-muted mr-1"></i> Tutorials
-                                                    </div>
-                                                </li>
-                                                <li class="dd-item" data-id="17">
-                                                    <div class="dd-handle">
-                                                        <i class="fa fa-file-alt text-muted mr-1"></i> Articles
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li class="dd-item" data-id="18">
-                                            <div class="dd-handle">
-                                                <i class="fa fa-bezier-curve text-muted mr-1"></i> Design
+                        <div class="ibox-content">
+                            <p class="big"><i class="fa fa-hand-o-up"></i> Drag task between list</p>
+
+
+                            <ul class="sortable-list connectList agile-list" id="backlog">
+                                @foreach ($projects as $project)
+                                    @if ($project->status == 'backlog')
+                                        <li class="warning-element" id="{{ $project->id }}">
+                                            {{ $project->project->name }}
+                                            <div class="agile-detail">
+                                                <a href="#" class="pull-right btn btn-xs btn-white">Tag</a>
+                                                <i class="fa fa-clock-o"></i> {{ $project->project->due_date }}
                                             </div>
                                         </li>
-                                        <li class="dd-item" data-id="19">
-                                            <div class="dd-handle">
-                                                <i class="fa fa-terminal text-muted mr-1"></i> Coding
-                                            </div>
-                                        </li>
-                                        <li class="dd-item" data-id="20">
-                                            <div class="dd-handle">
-                                                <i class="fa fa-burn text-muted mr-1"></i> Marketing
-                                            </div>
-                                        </li>
-                                    </ol>
-                                </div>
-                            </div>
+                                    @endif
+                                @endforeach
+                            </ul>
                         </div>
-                        <!-- END With Icons -->
-                    </div>
-                    <div class="col-xl-4">
-                        <!-- Tree View -->
-                        <div class="block block-rounded">
-                            <div class="block-header block-header-default">
-                                <h3 class="block-title">Tree View</h3>
-                            </div>
-                            <div class="block-content block-content-full">
-                                <div class="js-nestable-connected-treeview dd">
-                                    <ol class="dd-list">
-                                        <li class="dd-item" data-id="21">
-                                            <div class="dd-handle">
-                                                <i class="fa fa-folder text-warning mr-1"></i> Photos
-                                            </div>
-                                            <ol class="dd-list">
-                                                <li class="dd-item" data-id="22">
-                                                    <div class="dd-handle">
-                                                        <i class="fa fa-file-alt text-info mr-1"></i> trip_image_1.jpg
-                                                    </div>
-                                                </li>
-                                                <li class="dd-item" data-id="23">
-                                                    <div class="dd-handle">
-                                                        <i class="fa fa-file-alt text-info mr-1"></i> trip_image_2.jpg
-                                                    </div>
-                                                </li>
-                                                <li class="dd-item" data-id="24">
-                                                    <div class="dd-handle">
-                                                        <i class="fa fa-file-alt text-info mr-1"></i> trip_image_3.jpg
-                                                    </div>
-                                                </li>
-                                                <li class="dd-item" data-id="25">
-                                                    <div class="dd-handle">
-                                                        <i class="fa fa-file-alt text-info mr-1"></i> trip_image_4.jpg
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li class="dd-item" data-id="26">
-                                            <div class="dd-handle">
-                                                <i class="fa fa-folder text-warning mr-1"></i> Videos
-                                            </div>
-                                            <ol class="dd-list">
-                                                <li class="dd-item" data-id="27">
-                                                    <div class="dd-handle">
-                                                        <i class="fa fa-file-alt text-info mr-1"></i> Trailer.mov
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li class="dd-item" data-id="28">
-                                            <div class="dd-handle">
-                                                <i class="fa fa-folder text-warning mr-1"></i> Notes
-                                            </div>
-                                            <ol class="dd-list">
-                                                <li class="dd-item" data-id="29">
-                                                    <div class="dd-handle">
-                                                        <i class="fa fa-file-alt text-info mr-1"></i> Trip.docx
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li class="dd-item" data-id="30">
-                                            <div class="dd-handle">
-                                                <i class="fa fa-file-alt text-info mr-1"></i> Backup.zip
-                                            </div>
-                                        </li>
-                                    </ol>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- END Tree View -->
                     </div>
                 </div>
-            </form>
+                <div class="col-lg-3">
+                    <div class="ibox">
+                        <div class="ibox-header p-3">
+                            <h2 class="m-0">In Progress</h2>
+                        </div>
+                        <div class="ibox-content">
+                            <p class="big"><i class="fa fa-hand-o-up"></i> Drag task between list</p>
+                            <ul class="sortable-list connectList agile-list" id="inprogress">
+                                @foreach ($projects as $project)
+                                    @if ($project->status == 'in_progress')
+                                        <li class="warning-element" id="{{ $project->id }}">
+                                            {{ $project->project->name }}
+                                            <div class="agile-detail">
+                                                <a href="#" class="pull-right btn btn-xs btn-white">Tag</a>
+                                                <i class="fa fa-clock-o"></i> {{ $project->project->due_date }}
+                                            </div>
+                                        </li>
+                                    @endif
+                                @endforeach
+                                <li class="danger-element" id="11">
+                                    Healthcare by parents (injected humour and the like).
+                                    <div class="agile-detail">
+                                        <a href="#" class="pull-right btn btn-xs btn-white">Mark</a>
+                                        <i class="fa fa-clock-o"></i> 16.11.2015
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="ibox">
+                        <div class="ibox-header p-3">
+                            <h2 class="m-0">Issues</h2>
+                        </div>
+                        <div class="ibox-content">
+                            <p class="big"><i class="fa fa-hand-o-up"></i> Drag task between list</p>
+                            <ul class="sortable-list connectList agile-list" id="issues">
+                                @foreach ($projects as $project)
+                                    @if ($project->status == 'issues')
+                                        <li class="warning-element" id="{{ $project->id }}">
+                                            {{ $project->project->name }}
+                                            <div class="agile-detail">
+                                                <a href="#" class="pull-right btn btn-xs btn-white">Tag</a>
+                                                <i class="fa fa-clock-o"></i> {{ $project->project->due_date }}
+                                            </div>
+                                        </li>
+                                    @endif
+                                @endforeach
+                                <li class="info-element" id="13">
+                                    Sometimes by accident, sometimes on purpose (injected humour and the like).
+                                    <div class="agile-detail">
+                                        <a href="#" class="pull-right btn btn-xs btn-white">Mark</a>
+                                        <i class="fa fa-clock-o"></i> 16.11.2015
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="ibox">
+                        <div class="ibox-header p-3">
+                            <h2 class="m-0">Completed</h2>
+                        </div>
+                        <div class="ibox-content">
+                            <p class="big"><i class="fa fa-hand-o-up"></i> Drag task between list</p>
+                            <ul class="sortable-list connectList agile-list" id="completed">
+                                @foreach ($projects as $project)
+                                    @if ($project->status == 'completed')
+                                        <li class="warning-element" id="{{ $project->id }}">
+                                            {{ $project->project->name }}
+                                            <div class="agile-detail">
+                                                <a href="#" class="pull-right btn btn-xs btn-white">Tag</a>
+                                                <i class="fa fa-clock-o"></i> {{ $project->project->due_date }}
+                                            </div>
+                                        </li>
+                                    @endif
+                                @endforeach
+                                <li class="success-element" id="14">
+                                    Healthcare by parents (injected humour and the like).
+                                    <div class="agile-detail">
+                                        <a href="#" class="pull-right btn btn-xs btn-white">Done</a>
+                                        <i class="fa fa-clock-o"></i> 16.11.2015
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </form>
 @endsection
 
 @section('scripts')
     @parent
-    <script src="{{ asset('/js/dashmix.core.min.js') }}"></script>
-    <script src="{{ asset('/js/dashmix.app.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('/js/plugins/nestable2/jquery.nestable.min.js') }}"></script>
-    <script src="{{ asset('/js/pages/be_comp_nestable.min.js') }}"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.1.0/fullcalendar.min.js'></script>
     <script>
         $(document).ready(function() {
-            // page is now ready, initialize the calendar...
-            events = {!! json_encode($events) !!};
-            $('#calendar').fullCalendar({
-                // put your options and callbacks here
-                events: events,
-
-
-            })
-        });
-        $(function() {
-            $('#savedraft').click(function() {
+            $("#btn_add").click(function(e) {
+                e.preventDefault();
+                var projectname = $('#inputaddproject').val();
+                console.log(projectname);
                 $.ajax({
-                    url: '/saveDraft',
-                    type: 'POST',
+                    url: "{{ route('admin.ajax_drag_project.create') }}",
+                    type: "POST",
+                    dataType: "JSON",
                     data: {
-                        id: 1
+                        projectname: projectname,
+                        _token: _token
                     },
                     success: function(response) {
-                        alert("success");
-                        //$('#something').html(response);
-                    }
+                        console.log(response);
+                    },
                 });
             });
+            $("#backlog, #inprogress,#issues, #completed").sortable({
+                connectWith: ".connectList",
+                update: function(event, ui) {
+                    var backlog = $("#backlog").sortable("toArray");
+                    var in_progress = $("#inprogress").sortable("toArray");
+                    var issues = $("#issues").sortable("toArray");
+                    var completed = $("#completed").sortable("toArray");
+                    let _token = $('meta[name="csrf-token"]').attr('content');
+
+                    $.ajax({
+                        url: "{{ route('admin.ajax_drag_project.store') }}",
+                        type: "POST",
+                        dataType: "JSON",
+                        data: {
+                            backlog: backlog,
+                            in_progress: in_progress,
+                            issues: issues,
+                            completed: completed,
+                            _token: _token
+                        },
+                        success: function(response) {
+                            //console.log(response);
+                        },
+                    });
+                    $('.output').html(
+                        "Backlog: " + window.JSON.stringify(backlog) + "<br/>" +
+                        "In Progress: " + window.JSON.stringify(inprogress) + "<br/>" +
+                        "Issues: " + window.JSON.stringify(issues) + "<br/>" +
+                        "Completed: " + window.JSON.stringify(completed)
+                    );
+                }
+            }).disableSelection();
+
         });
     </script>
 @stop
